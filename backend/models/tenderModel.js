@@ -1,0 +1,1 @@
+// tenderModel.js - placeholder

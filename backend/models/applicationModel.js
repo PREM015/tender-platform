@@ -1,0 +1,1 @@
+// applicationModel.js - placeholder
