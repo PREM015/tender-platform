@@ -1,2 +1,0 @@
-// page.js - placeholder
-dfsd

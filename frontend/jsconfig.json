@@ -1,1 +1,7 @@
-// jsconfig.json - placeholder
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
