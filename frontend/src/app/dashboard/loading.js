@@ -1,6 +1,3 @@
-// page.js - placeholder
-"use client";
-
 export default function Loading() {
-  return <div className="loading">Loading dashboard...</div>;
+  return <p style={{ padding: "2rem" }}>Loading dashboard...</p>;
 }
