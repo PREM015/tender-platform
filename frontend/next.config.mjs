@@ -1,4 +1,11 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+  experimental: {
+    appDir: true,
+    serverActions: true,
+    // 👇 this disables the spinning "N"
+    serverComponentsExternalPackages: [],
+  },
+};
 
 export default nextConfig;
