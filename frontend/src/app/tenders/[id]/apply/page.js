@@ -27,12 +27,32 @@ export default function ApplyToTenderPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // For now, log the form
-    console.log("Tender ID:", id);
-    console.log("Application data:", form);
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Please login first.");
 
-    alert("✅ Application submitted (mock)");
-    router.push("/dashboard");
+    try {
+      const res = await fetch("http://localhost:5000/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          tenderId: id,
+          message: form.message,
+          expectedBudget: form.expectedBudget,
+          resumeURL: "https://example.com/resume.pdf", 
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to apply");
+
+      alert("✅ Application submitted!");
+      router.push("/dashboard");
+    } catch (err) {
+      console.error(err);
+      alert("❌ Submission failed.");
+    }
   };
 
   return (
