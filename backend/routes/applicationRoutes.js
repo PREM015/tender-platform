@@ -6,5 +6,6 @@ import { authenticate } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", authenticate, applyToTender);
+router.get("/my", authenticate, getMyApplications);
 
 export default router;

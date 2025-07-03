@@ -1,59 +1,63 @@
-// page.js - placeholder
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Simulated fetch – replace with real API call
-    setApplications([
-      {
-        id: "a1",
-        name: "John Doe",
-        email: "john@example.com",
-        tenderTitle: "Logo Design Needed",
-        coverLetter:
-          "I have 5+ years experience designing brand identities. Check my portfolio at...",
-      },
-      {
-        id: "a2",
-        name: "Anita Sharma",
-        email: "anita@example.com",
-        tenderTitle: "E-Commerce Website",
-        coverLetter:
-          "Built 20+ scalable web apps for clients. Would love to work on this!",
-      },
-    ]);
+    const token = localStorage.getItem("token");
+    if (!token) return alert("Please log in to view your applications.");
+
+    const fetchApps = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/applications/my", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+        setApplications(data);
+      } catch (err) {
+        console.error("Failed to fetch applications:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchApps();
   }, []);
 
+  if (loading) return <div className="p-8">Loading applications...</div>;
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">📨 Tender Applications</h1>
+    <div className="max-w-4xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-bold mb-6">📋 My Applications</h1>
 
       {applications.length === 0 ? (
-        <p>No applications received yet.</p>
+        <p className="text-gray-500">You haven't applied to any tenders yet.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {applications.map((app) => (
-            <div key={app.id} className="p-4 border rounded shadow-sm">
-              <h2 className="text-lg font-semibold">{app.name}</h2>
-              <p className="text-sm text-gray-600">{app.email}</p>
-              <p className="mt-1">
-                <strong>Applied for:</strong> {app.tenderTitle}
-              </p>
-              <p className="mt-2 text-gray-700">
-                {app.coverLetter.length > 100
-                  ? app.coverLetter.slice(0, 100) + "..."
-                  : app.coverLetter}
-              </p>
+            <div
+              key={app._id || app.id}
+              className="p-4 border rounded shadow-sm bg-white"
+            >
+              <h2 className="text-xl font-semibold mb-1">
+                🧾 {app.tenderTitle || "Untitled Tender"}
+              </h2>
+              <p className="mb-1">💰 Budget: ₹{app.expectedBudget}</p>
+              <p className="mb-1">✍️ Message: {app.message}</p>
 
               <button
-                className="mt-3 inline-block text-blue-600 hover:underline text-sm"
-                onClick={() => alert("Full detail view coming soon")}
+                onClick={() => router.push(`/tenders/${app.tenderId}`)}
+                className="text-blue-600 underline mt-2 inline-block"
               >
-                View full
+                View Tender
               </button>
             </div>
           ))}
