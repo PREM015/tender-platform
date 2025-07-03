@@ -39,7 +39,7 @@ export default function ApplicationsPage() {
       <h1 className="text-2xl font-bold mb-6">📋 My Applications</h1>
 
       {applications.length === 0 ? (
-        <p className="text-gray-500">You haven't applied to any tenders yet.</p>
+        <p className="text-gray-500">You haven&#39;t applied to any tenders yet.</p>
       ) : (
         <div className="space-y-6">
           {applications.map((app) => (
