@@ -37,6 +37,13 @@ export default function Navbar() {
         <Link href="/company" className="hover:underline">
           Company
         </Link>
+        <Link href="/applications" className="hover:underline">
+  Applications
+</Link><Link href="/profile" className="hover:underline">
+  Profile
+</Link>
+
+
         {isLoggedIn && (
           <button
             onClick={handleLogout}

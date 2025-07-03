@@ -2,33 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import useAuth from "../hooks/useAuth";
+import TenderCard from "../components/TenderCard";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, logout } = useAuth({ protect: true });
   const [tenders, setTenders] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    fetch("http://localhost:5000/api/auth/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUser(data.user);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-
-    // Dummy tenders list for now
+    // 🔧 Replace this with real API later
     setTenders([
       {
         id: "1",
@@ -45,15 +28,13 @@ export default function DashboardPage() {
     ]);
   }, []);
 
-  if (loading) {
+  if (!user) {
     return <div className="p-8">Loading dashboard...</div>;
   }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-4">
-        👋 Welcome, {user ? user.email : "Guest"}
-      </h1>
+      <h1 className="text-2xl font-bold mb-4">👋 Welcome, {user.email}</h1>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-blue-100 text-blue-900 p-4 rounded shadow">
@@ -77,21 +58,19 @@ export default function DashboardPage() {
 
       <div className="space-y-4">
         {tenders.map((tender) => (
-          <div
-            key={tender.id}
-            className="border p-4 rounded hover:shadow transition"
-          >
-            <h3 className="font-semibold text-lg">{tender.title}</h3>
-            <p>Budget: ₹{tender.budget}</p>
-            <p>Deadline: {tender.deadline}</p>
-            <a
-              href={`/tenders/${tender.id}`}
-              className="text-blue-600 underline inline-block mt-1"
-            >
-              View
-            </a>
-          </div>
+          <TenderCard key={tender.id} tender={tender} />
         ))}
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">⚙️ Account</h2>
+        <p>Email: {user.email}</p>
+        <button
+          onClick={logout}
+          className="mt-2 bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
