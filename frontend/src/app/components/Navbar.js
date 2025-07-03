@@ -1,0 +1,51 @@
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+export default function Navbar() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
+
+  return (
+    <nav className="bg-gray-800 text-white px-6 py-3 shadow-md flex justify-between items-center">
+      <Link href="/dashboard" className="text-xl font-bold">
+        🏗️ TenderPlatform
+      </Link>
+
+      <div className="flex gap-4 items-center">
+        <Link href="/dashboard" className="hover:underline">
+          Dashboard
+        </Link>
+        <Link href="/tenders/new" className="hover:underline">
+          Create Tender
+        </Link>
+        <Link href="/search" className="hover:underline">
+          Search
+        </Link>
+        <Link href="/company" className="hover:underline">
+          Company
+        </Link>
+        {isLoggedIn && (
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition"
+          >
+            Logout
+          </button>
+        )}
+      </div>
+    </nav>
+  );
+}
