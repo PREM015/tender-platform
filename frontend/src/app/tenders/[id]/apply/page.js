@@ -1,84 +1,100 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { useParams } from "next/navigation";
 
-export default function ApplyToTender() {
-    const params = useParams(); // gets tender ID from URL
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        coverLetter: "",
-        resume: null,
-    });
+export default function ApplyToTenderPage() {
+  const { id } = useParams();
+  const router = useRouter();
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        if (name === "resume") {
-            setForm({ ...form, resume: files[0] });
-        } else {
-            setForm({ ...form, [name]: value });
-        }
-    };
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+    expectedBudget: "",
+    resume: null,
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Applying to Tender ID:", params.id);
-        console.log("Application Data:", form);
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "resume") {
+      setForm({ ...form, resume: files[0] });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+  };
 
-        // Later, send to backend via FormData + token
-        alert("✅ Application submitted (mock)");
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    return (
-        <div className="max-w-2xl mx-auto p-6">
-            <h1 className="text-2xl font-bold mb-4">🧾 Apply to Tender</h1>
+    // For now, log the form
+    console.log("Tender ID:", id);
+    console.log("Application data:", form);
 
-            <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow border">
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Your Full Name"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                />
+    alert("✅ Application submitted (mock)");
+    router.push("/dashboard");
+  };
 
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Your Email"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                />
+  return (
+    <div className="max-w-2xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">📝 Apply for Tender #{id}</h1>
 
-                <textarea
-                    name="coverLetter"
-                    placeholder="Why are you a good fit?"
-                    value={form.coverLetter}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full p-2 border rounded"
-                />
+      <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow border">
+        <input
+          type="text"
+          name="name"
+          placeholder="Your Full Name"
+          value={form.name}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
 
-                <input
-                    type="file"
-                    name="resume"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                />
+        <input
+          type="email"
+          name="email"
+          placeholder="Your Email"
+          value={form.email}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
 
-                <button
-                    type="submit"
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                >
-                    Submit Application
-                </button>
-            </form>
-        </div>
-    );
+        <textarea
+          name="message"
+          placeholder="Your proposal / cover letter"
+          value={form.message}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          rows={4}
+          required
+        />
+
+        <input
+          type="number"
+          name="expectedBudget"
+          placeholder="Expected Budget (₹)"
+          value={form.expectedBudget}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          required
+        />
+
+        <input
+          type="file"
+          name="resume"
+          accept=".pdf,.doc,.docx"
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+        />
+
+        <button
+          type="submit"
+          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Submit Application
+        </button>
+      </form>
+    </div>
+  );
 }

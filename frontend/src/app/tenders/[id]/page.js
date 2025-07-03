@@ -1,26 +1,31 @@
-// page.js - placeholder
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-export default function TenderDetailPage({ params }) {
+export default function TenderDetailsPage() {
+  const { id } = useParams();
   const [tender, setTender] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const dummyTender = {
-    title: "Website Development",
-    category: "Software Services",
-    budget: 50000,
-    deadline: "2025-08-10",
-    description: "Need a responsive and SEO-friendly website for a logistics company.",
-    postedBy: "Raj Pvt Ltd",
-  };
-
-  // 👇 Later this will fetch data from backend using params.id
   useEffect(() => {
-    setTender(dummyTender); // Simulate fetch
-  }, [params.id]);
+    // 🔧 Replace this with real backend fetch using id
+    const dummyTender = {
+      id,
+      title: "Website Development",
+      category: "Software Services",
+      budget: 50000,
+      deadline: "2025-08-10",
+      description: "Need a responsive and SEO-friendly website for a logistics company.",
+      postedBy: "Raj Pvt Ltd",
+    };
 
-  if (!tender) return <p className="p-8">Loading...</p>;
+    setTender(dummyTender); // Simulated fetch
+    setLoading(false);
+  }, [id]);
+
+  if (loading) return <div className="p-8">Loading tender...</div>;
+  if (!tender) return <div className="p-8">Tender not found.</div>;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
@@ -42,7 +47,7 @@ export default function TenderDetailPage({ params }) {
         className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded shadow"
         onClick={() => alert("Apply flow will be added soon")}
       >
-        Apply Now
+        📝 Apply Now
       </button>
     </div>
   );
