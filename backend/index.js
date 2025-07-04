@@ -8,7 +8,7 @@ import applicationRoutes from "./routes/applicationRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 dotenv.config();
 
-const app = express(); // ✅ Define app first
+const app = express(); 
 
 app.use(cors());
 app.use(express.json());
