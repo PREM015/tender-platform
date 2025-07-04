@@ -1,10 +1,11 @@
+import path from "path";
+
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: {
-      enabled: true
-    },
+  webpack: (config) => {
+    config.resolve.alias["@"] = path.resolve(__dirname, "src");
+    return config;
   },
-  serverExternalPackages: [],
   images: {
     remotePatterns: [
       {
@@ -15,3 +16,5 @@ const nextConfig = {
     ],
   },
 };
+
+export default nextConfig;

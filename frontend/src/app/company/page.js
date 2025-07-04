@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient"; // ✅ fixed import
 
 export default function CompanyPage() {
   const [form, setForm] = useState({
@@ -17,7 +17,7 @@ export default function CompanyPage() {
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
-  // Fetch existing company profile
+  // ✅ Fetch existing company data
   useEffect(() => {
     if (!token) return;
 
@@ -42,13 +42,21 @@ export default function CompanyPage() {
       });
   }, []);
 
-  // Handle input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle logo upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setLogoFile(file);
+    if (file) {
+      // ✅ Live preview
+      const previewUrl = URL.createObjectURL(file);
+      setForm((prev) => ({ ...prev, logo_url: previewUrl }));
+    }
+  };
+
   const uploadLogo = async () => {
     if (!logoFile) return null;
     const filePath = `logos/${Date.now()}-${logoFile.name}`;
@@ -63,7 +71,6 @@ export default function CompanyPage() {
     return publicUrl;
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -71,6 +78,7 @@ export default function CompanyPage() {
 
     try {
       let logoUrl = form.logo_url;
+
       if (logoFile) {
         logoUrl = await uploadLogo();
       }
@@ -130,7 +138,7 @@ export default function CompanyPage() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setLogoFile(e.target.files[0])}
+          onChange={handleFileChange}
           className="block"
         />
 
