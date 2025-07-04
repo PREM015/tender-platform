@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
-import testRoutes from "./routes/testRoutes.js";
+
 import searchRoutes from "./routes/searchRoutes.js";
 dotenv.config();
 
