@@ -3,8 +3,16 @@ const nextConfig = {
   experimental: {
     appDir: true,
     serverActions: true,
-    // 👇 this disables the spinning "N"
     serverComponentsExternalPackages: [],
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'quhlodayqewxrnsscjop.supabase.co',
+        pathname: '/storage/**',
+      },
+    ],
   },
 };
 
