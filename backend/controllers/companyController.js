@@ -1,42 +1,80 @@
-// companyController.js - placeholder
-const companies = [];
+import db from "../config/db.js";
+import { companySchema } from "../validators/companyValidator.js";
 
-export const createCompany = (req, res) => {
-  const { companyName, industry, description } = req.body;
-  const email = req.user.email;
+// Create a new company
+export const createCompany = async (req, res) => {
+  const { error } = companySchema.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
-  const exists = companies.find(c => c.email === email);
-  if (exists) {
-    return res.status(400).json({ message: "Company already exists" });
+  const userId = req.user.id;
+  const { companyName, industry, description, logoUrl } = req.body;
+
+  try {
+    const existing = await db("companies").where({ user_id: userId }).first();
+    if (existing) {
+      return res.status(400).json({ message: "Company already exists" });
+    }
+
+    const [company] = await db("companies")
+      .insert({
+        user_id: userId,
+        company_name: companyName,
+        industry,
+        description,
+        logo_url: logoUrl || null,
+      })
+      .returning("*");
+
+    res.status(201).json({ message: "Company created", company });
+  } catch (err) {
+    console.error("Create company error:", err);
+    res.status(500).json({ message: "Server error" });
   }
-
-  const company = { email, companyName, industry, description };
-  companies.push(company);
-
-  res.status(201).json({ message: "Company created", company });
 };
 
-export const getCompany = (req, res) => {
-  const email = req.user.email;
-  const company = companies.find(c => c.email === email);
+// Get company profile
+export const getCompany = async (req, res) => {
+  const userId = req.user.id;
 
-  if (!company) {
-    return res.status(404).json({ message: "Company not found" });
+  try {
+    const company = await db("companies").where({ user_id: userId }).first();
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    res.json(company);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
-
-  res.json(company);
 };
 
-export const updateCompany = (req, res) => {
-  const email = req.user.email;
-  const index = companies.findIndex(c => c.email === email);
+// Update company
+export const updateCompany = async (req, res) => {
+  const { error } = companySchema.validate(req.body);
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
-  if (index === -1) {
-    return res.status(404).json({ message: "Company not found" });
+  const userId = req.user.id;
+  const { companyName, industry, description, logoUrl } = req.body;
+
+  try {
+    const updated = await db("companies")
+      .where({ user_id: userId })
+      .update({
+        company_name: companyName,
+        industry,
+        description,
+        logo_url: logoUrl || null,
+        updated_at: new Date(),
+      })
+      .returning("*");
+
+    if (!updated.length) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    res.json({ message: "Company updated", company: updated[0] });
+  } catch (err) {
+    res.status(500).json({ message: "Update failed" });
   }
-
-  const updated = { ...companies[index], ...req.body };
-  companies[index] = updated;
-
-  res.json({ message: "Company updated", company: updated });
 };
